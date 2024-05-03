@@ -2,15 +2,18 @@
 function Header() {
 
 
-    return (
-      <>
-        <header>
-            <div className="topNavBar">
-                <h1>R Store</h1>
-            </div>  
-        </header>
-      </>
-    )
-  }
-  
-  export default Header
+  return (
+   
+      <header className="topNavBar">
+       
+        <ul>
+          <h1><a href="/">R Store</a></h1>
+          <li><a href="/clothing">Clothings</a></li>
+          <li><a href="/item-checkout">Checkout</a></li>
+        </ul>
+      </header>
+    
+  )
+}
+
+export default Header
