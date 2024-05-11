@@ -20,10 +20,10 @@ function ItemCheckoutContainer({ items }) {
     const stripe = await stripePromise;
 
     // Send a request to the backend to create a checkout session
-    const response = await fetch('http://localhost:4000/create-checkout-session', {
+    const response = await fetch('http://34.69.207.8:4000/create-checkout-session', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json',s
       },
       body: JSON.stringify({ productName, price }), // Send product name and price to the backend
     });
