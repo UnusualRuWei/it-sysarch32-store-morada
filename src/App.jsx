@@ -1,4 +1,5 @@
 
+
 import { BrowserRouter as Router, Routes, Route, useParams } from 'react-router-dom';
 
 import StoreItems from './components/StoreItems'
@@ -8,6 +9,8 @@ import Footer from './components/Footer';
 import ItemDetails from './components/ItemDetails';
 
 function App() {
+
+
 
   return (
     <>
@@ -25,7 +28,7 @@ function App() {
       </Router>
       
 
-
+        
       <Footer/>
     </>
   )

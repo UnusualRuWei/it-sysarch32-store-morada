@@ -6,9 +6,44 @@ import removeIcon from '../assets/close.png'
 import { fdb } from '../config/firebase';
 import { deleteDoc, doc } from 'firebase/firestore';
 
+import { loadStripe } from '@stripe/stripe-js';
+
+
 function ItemCheckoutContainer({ items }) {
     const [previewItem, setPreviewItem] = useState(null);
     const [checkoutItems, setCheckoutItems] = useState([]);
+
+    const stripePromise = loadStripe('pk_test_51PF3D2CU64nepcNrQnSX2uaCTmnQg5EjDYf1rW99sonwXlq5soPoDnCxOp7ZLWi5dkUL6IjxF07c5EGCiyZJFeAh00JHHpksRb');
+
+      // Handle the click event when the user clicks the "Checkout" button
+    const handleClick = async (productName, price) => {
+    const stripe = await stripePromise;
+
+    // Send a request to the backend to create a checkout session
+    const response = await fetch('http://localhost:4000/create-checkout-session', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ productName, price }), // Send product name and price to the backend
+    });
+
+    if (response.ok) {
+      // If the request is successful, retrieve the session ID from the response
+      const session = await response.json();
+
+      // Redirect the user to the Stripe Checkout page using the session ID
+      const result = await stripe.redirectToCheckout({ sessionId: session.id });
+
+      if (result.error) {
+        // If there is an error during the redirect, display the error message
+        setError(result.error.message);
+      }
+    } else {
+      // If there is an error creating the checkout session, display an error message
+      setError('Error creating checkout session');
+    }
+  };
 
     useEffect(() => {
         setCheckoutItems(items);
@@ -30,6 +65,14 @@ function ItemCheckoutContainer({ items }) {
         setCheckoutItems(checkoutItems.filter(checkoutItem => checkoutItem.id !== item.id));
     };
 
+    const handleProductNameChange = (event) => {
+        setProductName(event.target.value);
+      };
+
+    const handlePriceChange = (event) => {
+        setPrice(event.target.value * 100); // Convert price to cents for Stripe
+      };
+
     return (
         <>
             {checkoutItems.length < 1 ? (
@@ -46,9 +89,13 @@ function ItemCheckoutContainer({ items }) {
                                 <img className="Icon" src={maxIcon} alt="preview" onClick={() => handlePreview(item)} />
                                 <img className="Icon" src={removeIcon} alt="remove" onClick={() => handleRemoveItem(item)} />
                             </div>
+                            <button onClick={() =>  handleClick(item.item_name, item.item_price * 100)}>Purchase</button>
                         </div>
-                    ))}
+                    ))
+                    }
                     {previewItem && <ItemPreview item={previewItem} handleClosePreview={handleClosePreview} />}
+                    
+                    
                 </>
             )}
         </>
